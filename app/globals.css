@@ -5,18 +5,18 @@
 
 /* NUM University Chatbot Theme */
 :root {
-  --background: #0a0e1a;
+  --background: #111827;
   --foreground: #f0f4ff;
-  --card: #0f1629;
+  --card: #1e293b;
   --card-foreground: #f0f4ff;
-  --popover: #0f1629;
+  --popover: #1e293b;
   --popover-foreground: #f0f4ff;
   --primary: #0C3EA1;
   --primary-foreground: #ffffff;
-  --secondary: #1a2744;
+  --secondary: #334155;
   --secondary-foreground: #f0f4ff;
-  --muted: #1a2744;
-  --muted-foreground: #8b9dc3;
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
   --accent: #0C3EA1;
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
@@ -30,29 +30,29 @@
   --chart-4: #93c5fd;
   --chart-5: #bfdbfe;
   --radius: 0.75rem;
-  --sidebar: #0f1629;
+  --sidebar: #1e293b;
   --sidebar-foreground: #f0f4ff;
   --sidebar-primary: #0C3EA1;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1a2744;
+  --sidebar-accent: #334155;
   --sidebar-accent-foreground: #f0f4ff;
-  --sidebar-border: #1e3a5f;
+  --sidebar-border: #475569;
   --sidebar-ring: #0C3EA1;
 }
 
 .dark {
-  --background: #0a0e1a;
+  --background: #111827;
   --foreground: #f0f4ff;
-  --card: #0f1629;
+  --card: #1e293b;
   --card-foreground: #f0f4ff;
-  --popover: #0f1629;
+  --popover: #1e293b;
   --popover-foreground: #f0f4ff;
   --primary: #0C3EA1;
   --primary-foreground: #ffffff;
-  --secondary: #1a2744;
+  --secondary: #334155;
   --secondary-foreground: #f0f4ff;
-  --muted: #1a2744;
-  --muted-foreground: #8b9dc3;
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
   --accent: #0C3EA1;
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
@@ -65,13 +65,13 @@
   --chart-3: #60a5fa;
   --chart-4: #93c5fd;
   --chart-5: #bfdbfe;
-  --sidebar: #0f1629;
+  --sidebar: #1e293b;
   --sidebar-foreground: #f0f4ff;
   --sidebar-primary: #0C3EA1;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1a2744;
+  --sidebar-accent: #334155;
   --sidebar-accent-foreground: #f0f4ff;
-  --sidebar-border: #1e3a5f;
+  --sidebar-border: #475569;
   --sidebar-ring: #0C3EA1;
 }
 
