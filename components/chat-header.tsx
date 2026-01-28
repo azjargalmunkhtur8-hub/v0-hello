@@ -55,9 +55,12 @@ export function ChatHeader({ onMenuClick }: ChatHeaderProps) {
               <h1 className="font-semibold text-foreground">NUM Assistant</h1>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">
-                  {language === "mn" ? "Сонгосон төрөл:" : "Selected:"}{" "}
+                  {language === "mn" ? "Сонгосон:" : "Selected:"}{" "}
                   <span className="text-primary">
                     {language === "mn" ? selectedCategoryData?.label : selectedCategoryData?.labelEn}
+                  </span>
+                  <span className="text-muted-foreground/60 ml-1">
+                    (:{selectedCategoryData?.port})
                   </span>
                 </span>
               </div>

@@ -3,13 +3,18 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
 export type Category = 
-  | "leave"           // ask_leave - Чөлөө авах
-  | "absence"         // ask_absence - Өвчтэй мэдэгдэх
-  | "assignment"      // ask_assignment_grade - Даалгаврын дүн
-  | "lab"             // ask_lab_grade - Лабын дүн
-  | "course"          // ask_course_grade - Хичээлийн дүн
-  | "wi"              // ask_w_i - W/I дүн
-  | "general"         // greet, goodbye - Ерөнхий
+  | "general"         // Ерөнхий асуулт
+  | "forms"           // Маягт ба тодорхойлолт
+  | "payment"         // Төлбөр
+  | "location"        // Байршил
+
+// Rasa endpoints for each category (different projects)
+export const RASA_ENDPOINTS: Record<Category, string> = {
+  general: "http://localhost:5005/webhooks/rest/webhook",
+  forms: "http://localhost:5006/webhooks/rest/webhook",
+  payment: "http://localhost:5007/webhooks/rest/webhook",
+  location: "http://localhost:5008/webhooks/rest/webhook"
+}
 
 export interface Message {
   id: string
@@ -33,39 +38,63 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined)
 
-const RASA_ENDPOINT = "http://localhost:5005/webhooks/rest/webhook"
+// Messages stored separately for each category
+type CategoryMessages = Record<Category, Message[]>
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const [messages, setMessages] = useState<Message[]>([])
+  const [categoryMessages, setCategoryMessages] = useState<CategoryMessages>({
+    general: [],
+    forms: [],
+    payment: [],
+    location: []
+  })
   const [selectedCategory, setSelectedCategory] = useState<Category>("general")
   const [language, setLanguage] = useState<"mn" | "en">("mn")
   const [isConnected, setIsConnected] = useState(false)
 
+  // Get messages for current category
+  const messages = categoryMessages[selectedCategory]
+
   // Load chat history from session storage
   useEffect(() => {
-    const stored = sessionStorage.getItem("num_chat_history")
+    const stored = sessionStorage.getItem("num_chat_history_v2")
     if (stored) {
       const parsed = JSON.parse(stored)
-      setMessages(parsed.map((m: Message) => ({
-        ...m,
-        timestamp: new Date(m.timestamp)
-      })))
+      const restored: CategoryMessages = {
+        general: [],
+        forms: [],
+        payment: [],
+        location: []
+      }
+      for (const cat of Object.keys(restored) as Category[]) {
+        if (parsed[cat]) {
+          restored[cat] = parsed[cat].map((m: Message) => ({
+            ...m,
+            timestamp: new Date(m.timestamp)
+          }))
+        }
+      }
+      setCategoryMessages(restored)
     }
     
-    // Check Rasa connection
-    checkConnection()
+    // Check Rasa connection for current category
+    checkConnection(selectedCategory)
   }, [])
+
+  // Check connection when category changes
+  useEffect(() => {
+    checkConnection(selectedCategory)
+  }, [selectedCategory])
 
   // Save chat history to session storage
   useEffect(() => {
-    if (messages.length > 0) {
-      sessionStorage.setItem("num_chat_history", JSON.stringify(messages))
-    }
-  }, [messages])
+    sessionStorage.setItem("num_chat_history_v2", JSON.stringify(categoryMessages))
+  }, [categoryMessages])
 
-  const checkConnection = async () => {
+  const checkConnection = async (category: Category) => {
     try {
-      const response = await fetch("http://localhost:5005/", { 
+      const baseUrl = RASA_ENDPOINTS[category].replace("/webhooks/rest/webhook", "")
+      const response = await fetch(baseUrl, { 
         method: "GET",
         signal: AbortSignal.timeout(3000)
       })
@@ -89,10 +118,15 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       }))
     }
 
-    setMessages(prev => [...prev, userMessage])
+    // Add message to current category
+    setCategoryMessages(prev => ({
+      ...prev,
+      [selectedCategory]: [...prev[selectedCategory], userMessage]
+    }))
 
     try {
-      // Send to Rasa with category metadata
+      // Send to the correct Rasa endpoint based on category
+      const endpoint = RASA_ENDPOINTS[selectedCategory]
       const payload = {
         sender: "user",
         message: content,
@@ -102,7 +136,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      const response = await fetch(RASA_ENDPOINT, {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -121,7 +155,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
               timestamp: new Date(),
               category: selectedCategory
             }
-            setMessages(prev => [...prev, assistantMessage])
+            setCategoryMessages(prev => ({
+              ...prev,
+              [selectedCategory]: [...prev[selectedCategory], assistantMessage]
+            }))
           }
         } else {
           addFallbackResponse()
@@ -138,33 +175,21 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const addFallbackResponse = () => {
     const fallbackMessages: Record<Category, Record<"mn" | "en", string>> = {
-      leave: {
-        mn: "Чөлөө авах хүсэлттэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
-        en: "Leave request related. Unable to connect to Rasa server."
-      },
-      absence: {
-        mn: "Өвчтэй/ирж чадахгүй мэдэгдэлтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
-        en: "Absence notification related. Unable to connect to Rasa server."
-      },
-      assignment: {
-        mn: "Даалгаврын дүнтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
-        en: "Assignment grade related. Unable to connect to Rasa server."
-      },
-      lab: {
-        mn: "Лабораторийн дүнтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
-        en: "Lab grade related. Unable to connect to Rasa server."
-      },
-      course: {
-        mn: "Хичээлийн дүнтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
-        en: "Course grade related. Unable to connect to Rasa server."
-      },
-      wi: {
-        mn: "W/I дүнтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
-        en: "W/I grade related. Unable to connect to Rasa server."
-      },
       general: {
-        mn: "Rasa серверт холбогдох боломжгүй байна. Localhost:5005 дээр Rasa server ажиллаж байгаа эсэхийг шалгана уу.",
-        en: "Unable to connect to Rasa server. Please check if Rasa server is running on localhost:5005."
+        mn: "Ерөнхий асуултын Rasa серверт холбогдох боломжгүй байна. Localhost:5005 дээр ажиллаж байгаа эсэхийг шалгана уу.",
+        en: "Unable to connect to General Rasa server. Please check if it's running on localhost:5005."
+      },
+      forms: {
+        mn: "Маягт ба тодорхойлолтын Rasa серверт холбогдох боломжгүй байна. Localhost:5006 дээр ажиллаж байгаа эсэхийг шалгана уу.",
+        en: "Unable to connect to Forms Rasa server. Please check if it's running on localhost:5006."
+      },
+      payment: {
+        mn: "Төлбөрийн Rasa серверт холбогдох боломжгүй байна. Localhost:5007 дээр ажиллаж байгаа эсэхийг шалгана уу.",
+        en: "Unable to connect to Payment Rasa server. Please check if it's running on localhost:5007."
+      },
+      location: {
+        mn: "Байршилын Rasa серверт холбогдох боломжгүй байна. Localhost:5008 дээр ажиллаж байгаа эсэхийг шалгана уу.",
+        en: "Unable to connect to Location Rasa server. Please check if it's running on localhost:5008."
       }
     }
 
@@ -175,11 +200,17 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       timestamp: new Date(),
       category: selectedCategory
     }
-    setMessages(prev => [...prev, assistantMessage])
+    setCategoryMessages(prev => ({
+      ...prev,
+      [selectedCategory]: [...prev[selectedCategory], assistantMessage]
+    }))
   }
 
   const clearHistory = () => {
-    setMessages([])
+    setCategoryMessages(prev => ({
+      ...prev,
+      [selectedCategory]: []
+    }))
     sessionStorage.removeItem("num_chat_history")
   }
 

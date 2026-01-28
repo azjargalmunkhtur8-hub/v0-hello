@@ -1,16 +1,13 @@
 "use client"
 
 import React from "react"
-import { useChat, type Category } from "@/lib/chat-context"
+import { useChat, type Category, RASA_ENDPOINTS } from "@/lib/chat-context"
 import { 
   X, 
-  CalendarOff, 
-  Thermometer, 
-  ClipboardList, 
-  FlaskConical, 
-  GraduationCap, 
-  FileWarning, 
-  MessageCircle 
+  MessageCircle, 
+  FileText, 
+  CreditCard, 
+  MapPin
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -19,70 +16,47 @@ interface CategorySidebarProps {
   onClose: () => void
 }
 
-// Categories mapped to Rasa intents
-const categories: { id: Category; label: string; labelEn: string; description: string; descriptionEn: string; icon: React.ElementType; color: string }[] = [
-  { 
-    id: "leave", 
-    label: "Чөлөө авах", 
-    labelEn: "Leave Request",
-    description: "Чөлөө авах хүсэлт бичих загвар",
-    descriptionEn: "Leave request template",
-    icon: CalendarOff,
-    color: "bg-blue-500"
-  },
-  { 
-    id: "absence", 
-    label: "Өвчтэй мэдэгдэх", 
-    labelEn: "Absence Notice",
-    description: "Ирж чадахгүй гэдгээ мэдэгдэх",
-    descriptionEn: "Report absence due to illness",
-    icon: Thermometer,
-    color: "bg-red-500"
-  },
-  { 
-    id: "assignment", 
-    label: "Даалгаврын дүн", 
-    labelEn: "Assignment Grade",
-    description: "Даалгаврын дүн асуух загвар",
-    descriptionEn: "Ask about assignment grades",
-    icon: ClipboardList,
-    color: "bg-yellow-500"
-  },
-  { 
-    id: "lab", 
-    label: "Лабын дүн", 
-    labelEn: "Lab Grade",
-    description: "Лабораторийн ажлын дүн асуух",
-    descriptionEn: "Ask about lab grades",
-    icon: FlaskConical,
-    color: "bg-purple-500"
-  },
-  { 
-    id: "course", 
-    label: "Хичээлийн дүн", 
-    labelEn: "Course Grade",
-    description: "Эцсийн дүн асуух загвар",
-    descriptionEn: "Ask about final course grades",
-    icon: GraduationCap,
-    color: "bg-green-500"
-  },
-  { 
-    id: "wi", 
-    label: "W / I дүн", 
-    labelEn: "W / I Grade",
-    description: "W, I дүн хүсэх загвар",
-    descriptionEn: "Request W or I grade",
-    icon: FileWarning,
-    color: "bg-orange-500"
-  },
+// 4 Categories mapped to different Rasa projects
+const categories: { id: Category; label: string; labelEn: string; description: string; descriptionEn: string; icon: React.ElementType; color: string; port: string }[] = [
   { 
     id: "general", 
-    label: "Ерөнхий", 
-    labelEn: "General",
-    description: "Бусад асуулт, мэндчилгээ",
-    descriptionEn: "Other questions, greetings",
+    label: "Ерөнхий асуулт", 
+    labelEn: "General Questions",
+    description: "Сургуультай холбоотой ерөнхий асуулт",
+    descriptionEn: "General questions about the university",
     icon: MessageCircle,
-    color: "bg-gray-500"
+    color: "bg-blue-500",
+    port: "5005"
+  },
+  { 
+    id: "forms", 
+    label: "Маягт ба тодорхойлолт", 
+    labelEn: "Forms & Documents",
+    description: "Маягт бөглөх, тодорхойлолт авах",
+    descriptionEn: "Fill forms, get documents",
+    icon: FileText,
+    color: "bg-green-500",
+    port: "5006"
+  },
+  { 
+    id: "payment", 
+    label: "Төлбөр", 
+    labelEn: "Payment",
+    description: "Төлбөр төлөх, үлдэгдэл шалгах",
+    descriptionEn: "Pay fees, check balance",
+    icon: CreditCard,
+    color: "bg-yellow-500",
+    port: "5007"
+  },
+  { 
+    id: "location", 
+    label: "Байршил", 
+    labelEn: "Location",
+    description: "Байр, анги танхим, алба хаана байрлах",
+    descriptionEn: "Building, classroom, office locations",
+    icon: MapPin,
+    color: "bg-red-500",
+    port: "5008"
   }
 ]
 
