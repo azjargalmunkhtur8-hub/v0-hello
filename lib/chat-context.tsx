@@ -3,12 +3,13 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
 export type Category = 
-  | "schedule" 
-  | "scholarship" 
-  | "dormitory" 
-  | "documents" 
-  | "payment" 
-  | "general"
+  | "leave"           // ask_leave - Чөлөө авах
+  | "absence"         // ask_absence - Өвчтэй мэдэгдэх
+  | "assignment"      // ask_assignment_grade - Даалгаврын дүн
+  | "lab"             // ask_lab_grade - Лабын дүн
+  | "course"          // ask_course_grade - Хичээлийн дүн
+  | "wi"              // ask_w_i - W/I дүн
+  | "general"         // greet, goodbye - Ерөнхий
 
 export interface Message {
   id: string
@@ -137,25 +138,29 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const addFallbackResponse = () => {
     const fallbackMessages: Record<Category, Record<"mn" | "en", string>> = {
-      schedule: {
-        mn: "Хичээлийн хуваарьтай холбоотой асуулт байна. Rasa сервертэй холбогдоход алдаа гарлаа. Localhost:5005 ажиллаж байгаа эсэхийг шалгана уу.",
-        en: "This is a schedule-related question. Failed to connect to Rasa server. Please check if localhost:5005 is running."
+      leave: {
+        mn: "Чөлөө авах хүсэлттэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
+        en: "Leave request related. Unable to connect to Rasa server."
       },
-      scholarship: {
-        mn: "Тэтгэлэгтэй холбоотой асуулт байна. Rasa серверт холбогдох боломжгүй байна.",
-        en: "This is a scholarship-related question. Unable to connect to Rasa server."
+      absence: {
+        mn: "Өвчтэй/ирж чадахгүй мэдэгдэлтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
+        en: "Absence notification related. Unable to connect to Rasa server."
       },
-      dormitory: {
-        mn: "Дотуур байртай холбоотой асуулт байна. Rasa серверт холбогдох боломжгүй байна.",
-        en: "This is a dormitory-related question. Unable to connect to Rasa server."
+      assignment: {
+        mn: "Даалгаврын дүнтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
+        en: "Assignment grade related. Unable to connect to Rasa server."
       },
-      documents: {
-        mn: "Тодорхойлолттой холбоотой асуулт байна. Rasa серверт холбогдох боломжгүй байна.",
-        en: "This is a documents-related question. Unable to connect to Rasa server."
+      lab: {
+        mn: "Лабораторийн дүнтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
+        en: "Lab grade related. Unable to connect to Rasa server."
       },
-      payment: {
-        mn: "Төлбөртэй холбоотой асуулт байна. Rasa серверт холбогдох боломжгүй байна.",
-        en: "This is a payment-related question. Unable to connect to Rasa server."
+      course: {
+        mn: "Хичээлийн дүнтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
+        en: "Course grade related. Unable to connect to Rasa server."
+      },
+      wi: {
+        mn: "W/I дүнтэй холбоотой. Rasa серверт холбогдох боломжгүй байна.",
+        en: "W/I grade related. Unable to connect to Rasa server."
       },
       general: {
         mn: "Rasa серверт холбогдох боломжгүй байна. Localhost:5005 дээр Rasa server ажиллаж байгаа эсэхийг шалгана уу.",

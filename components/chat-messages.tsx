@@ -118,11 +118,12 @@ export function ChatMessages() {
 
 function getCategoryLabel(category: string, language: "mn" | "en"): string {
   const labels: Record<string, Record<"mn" | "en", string>> = {
-    schedule: { mn: "Хичээл / Хуваарь", en: "Classes / Schedule" },
-    scholarship: { mn: "Тэтгэлэг", en: "Scholarship" },
-    dormitory: { mn: "Дотуур байр", en: "Dormitory" },
-    documents: { mn: "Тодорхойлолт", en: "Documents" },
-    payment: { mn: "Төлбөр", en: "Payment" },
+    leave: { mn: "Чөлөө авах", en: "Leave Request" },
+    absence: { mn: "Өвчтэй мэдэгдэх", en: "Absence Notice" },
+    assignment: { mn: "Даалгаврын дүн", en: "Assignment Grade" },
+    lab: { mn: "Лабын дүн", en: "Lab Grade" },
+    course: { mn: "Хичээлийн дүн", en: "Course Grade" },
+    wi: { mn: "W / I дүн", en: "W / I Grade" },
     general: { mn: "Ерөнхий", en: "General" }
   }
   return labels[category]?.[language] || category

@@ -1,9 +1,17 @@
 "use client"
 
 import React from "react"
-
 import { useChat, type Category } from "@/lib/chat-context"
-import { X, Calendar, Award, Home, FileText, CreditCard, MessageCircle } from "lucide-react"
+import { 
+  X, 
+  CalendarOff, 
+  Thermometer, 
+  ClipboardList, 
+  FlaskConical, 
+  GraduationCap, 
+  FileWarning, 
+  MessageCircle 
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface CategorySidebarProps {
@@ -11,60 +19,70 @@ interface CategorySidebarProps {
   onClose: () => void
 }
 
+// Categories mapped to Rasa intents
 const categories: { id: Category; label: string; labelEn: string; description: string; descriptionEn: string; icon: React.ElementType; color: string }[] = [
   { 
-    id: "schedule", 
-    label: "Хичээл / Хуваарь", 
-    labelEn: "Classes / Schedule",
-    description: "Хичээлийн хуваарь, шалгалт, семинар",
-    descriptionEn: "Class schedule, exams, seminars",
-    icon: Calendar,
+    id: "leave", 
+    label: "Чөлөө авах", 
+    labelEn: "Leave Request",
+    description: "Чөлөө авах хүсэлт бичих загвар",
+    descriptionEn: "Leave request template",
+    icon: CalendarOff,
     color: "bg-blue-500"
   },
   { 
-    id: "scholarship", 
-    label: "Тэтгэлэг", 
-    labelEn: "Scholarship",
-    description: "Шаардлага, хугацаа, материал",
-    descriptionEn: "Requirements, deadlines, materials",
-    icon: Award,
+    id: "absence", 
+    label: "Өвчтэй мэдэгдэх", 
+    labelEn: "Absence Notice",
+    description: "Ирж чадахгүй гэдгээ мэдэгдэх",
+    descriptionEn: "Report absence due to illness",
+    icon: Thermometer,
+    color: "bg-red-500"
+  },
+  { 
+    id: "assignment", 
+    label: "Даалгаврын дүн", 
+    labelEn: "Assignment Grade",
+    description: "Даалгаврын дүн асуух загвар",
+    descriptionEn: "Ask about assignment grades",
+    icon: ClipboardList,
     color: "bg-yellow-500"
   },
   { 
-    id: "dormitory", 
-    label: "Дотуур байр", 
-    labelEn: "Dormitory",
-    description: "Бүртгэл, төлбөр, журам",
-    descriptionEn: "Registration, payment, rules",
-    icon: Home,
-    color: "bg-orange-500"
+    id: "lab", 
+    label: "Лабын дүн", 
+    labelEn: "Lab Grade",
+    description: "Лабораторийн ажлын дүн асуух",
+    descriptionEn: "Ask about lab grades",
+    icon: FlaskConical,
+    color: "bg-purple-500"
   },
   { 
-    id: "documents", 
-    label: "Тодорхойлолт", 
-    labelEn: "Documents",
-    description: "Ямар бичиг баримт хаанаас авах",
-    descriptionEn: "Where to get documents",
-    icon: FileText,
-    color: "bg-gray-400"
-  },
-  { 
-    id: "payment", 
-    label: "Төлбөр", 
-    labelEn: "Payment",
-    description: "Төлбөр төлөх, үлдэгдэл, данс",
-    descriptionEn: "Pay fees, balance, account",
-    icon: CreditCard,
+    id: "course", 
+    label: "Хичээлийн дүн", 
+    labelEn: "Course Grade",
+    description: "Эцсийн дүн асуух загвар",
+    descriptionEn: "Ask about final course grades",
+    icon: GraduationCap,
     color: "bg-green-500"
+  },
+  { 
+    id: "wi", 
+    label: "W / I дүн", 
+    labelEn: "W / I Grade",
+    description: "W, I дүн хүсэх загвар",
+    descriptionEn: "Request W or I grade",
+    icon: FileWarning,
+    color: "bg-orange-500"
   },
   { 
     id: "general", 
     label: "Ерөнхий", 
     labelEn: "General",
-    description: "Бусад асуулт",
-    descriptionEn: "Other questions",
+    description: "Бусад асуулт, мэндчилгээ",
+    descriptionEn: "Other questions, greetings",
     icon: MessageCircle,
-    color: "bg-purple-500"
+    color: "bg-gray-500"
   }
 ]
 
